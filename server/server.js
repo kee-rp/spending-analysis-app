@@ -1,37 +1,27 @@
 const express = require('express');
 const app = express();
-const mysql = require('mysql');
 
 const dotenv = require('dotenv');
 dotenv.config();
 
-const host = process.env.DB_HOST;
-const user = process.env.DB_USER;
-const password = process.env.DB_PASS;
-const database = process.env.DB_DATABASE;
+const connenction = require('./utils/connection');
+const query = require('./utils/query');
 
-// Create connection
-const con = mysql.createConnection({
-    host,
-    user,
-    password,
-    database
-});
+const dbConfig = {
+    host: process.env.DB_HOST,
+    user: process.env.DB_USER,
+    password: process.env.DB_PASS,
+    database: process.env.DB_DATABASE
+};
 
-const query = 'SELECT * FROM transactions';
+app.get('/', (req, res) => res.send('default page'));
 
-// Make connection to the database.
-con.connect(function(err) {
-    if (err) throw err;
-
-    // if connection is successful
-    con.query(query, (err, result, fields) => {
-        // if any error while executing above query, throw error
-        if (err) throw err;
-
-        // if there is no error, you have the result
-        console.log(result);
-    });
+app.get('/list', async (req, res) => {
+    const conn = await connenction(dbConfig).catch(e => {});
+    const results = await query(conn, 'SELECT * FROM transactions').catch(
+        console.log
+    );
+    res.json({ results });
 });
 
 app.listen(process.env.PORT, () => console.log('app is running'));
