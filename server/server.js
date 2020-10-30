@@ -8,6 +8,8 @@ const mysql = require('mysql');
 const dotenv = require('dotenv');
 dotenv.config();
 
+// ASSUMPTION: table has already been created
+
 const dbConfig = {
     host: process.env.DB_HOST,
     user: process.env.DB_USER,
@@ -17,9 +19,9 @@ const dbConfig = {
 
 const pool = mysql.createPool(dbConfig);
 
+// TODO: REFACTOR
+// Load data manually for now
 const results = [];
-
-// Load data manually for now     TODO: REFACTOR
 fs.createReadStream('data/accountactivity.csv')
     .pipe(csv(['date', 'description', 'debit', 'credit', 'balance']))
     .on('data', data => results.push(data))
