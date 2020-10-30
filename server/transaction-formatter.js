@@ -2,8 +2,10 @@ class TransactionFormatter {
     format(transaction) {
         const formattedTransaction = {};
 
-        formattedTransaction['date'] = this.formatDate(transaction['date']);
-        formattedTransaction['description'] = transaction['description'];
+        formattedTransaction['date'] = `"${this.formatDate(
+            transaction['date']
+        )}"`;
+        formattedTransaction['description'] = `"${transaction['description']}"`;
         formattedTransaction['debit'] = this.formatMonetaryValue(
             transaction['debit']
         );

@@ -13,8 +13,8 @@ describe('TransactionFormatter', () => {
         };
 
         const output = {
-            date: '2020-09-23',
-            description: 'SHOPPERSDRUGMART2273',
+            date: '"2020-09-23"',
+            description: '"SHOPPERSDRUGMART2273"',
             debit: 1231,
             credit: 0,
             balance: -8606
@@ -35,8 +35,8 @@ describe('TransactionFormatter', () => {
         };
 
         const output = {
-            date: '2020-10-04',
-            description: 'UBER * PENDING',
+            date: '"2020-10-04"',
+            description: '"UBER * PENDING"',
             debit: 6273,
             credit: 0,
             balance: 54151
