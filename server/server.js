@@ -1,11 +1,8 @@
 const express = require('express');
 const app = express();
-
+const mysql = require('mysql');
 const dotenv = require('dotenv');
 dotenv.config();
-
-const connenction = require('./utils/connection');
-const query = require('./utils/query');
 
 const dbConfig = {
     host: process.env.DB_HOST,
@@ -14,14 +11,31 @@ const dbConfig = {
     database: process.env.DB_DATABASE
 };
 
+const pool = mysql.createPool(dbConfig);
+
+// Load data manually for now     TODO: REFACTOR
+
 app.get('/', (req, res) => res.send('default page'));
 
-app.get('/list', async (req, res) => {
-    const conn = await connenction(dbConfig).catch(e => {});
-    const results = await query(conn, 'SELECT * FROM transactions').catch(
-        console.log
-    );
-    res.json({ results });
+app.get('/list', (req, res) => {
+    pool.getConnection((err, connection) => {
+        if (err) throw err; // not connected
+
+        // Use the connection
+        connection.query(
+            'SELECT * FROM transactions;',
+            (error, results, fields) => {
+                // When done with the connection, release it
+                connection.release();
+
+                // Handle error after the release
+                if (error) throw error;
+
+                // Don't use the connection here, it has been returned to the pool
+                res.send(results);
+            }
+        );
+    });
 });
 
 app.listen(process.env.PORT, () => console.log('app is running'));
