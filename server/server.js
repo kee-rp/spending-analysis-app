@@ -1,5 +1,9 @@
 const express = require('express');
 const app = express();
+
+const csv = require('csv-parser');
+const fs = require('fs');
+
 const mysql = require('mysql');
 const dotenv = require('dotenv');
 dotenv.config();
@@ -13,7 +17,15 @@ const dbConfig = {
 
 const pool = mysql.createPool(dbConfig);
 
+const results = [];
+
 // Load data manually for now     TODO: REFACTOR
+fs.createReadStream('data/accountactivity.csv')
+    .pipe(csv(['date', 'description', 'debit', 'credit', 'balance']))
+    .on('data', data => results.push(data))
+    .on('end', () => {
+        console.log(results);
+    });
 
 app.get('/', (req, res) => res.send('default page'));
 
